@@ -1,0 +1,2 @@
+# shader precompiler
+ precompile shader
