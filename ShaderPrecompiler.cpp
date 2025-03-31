@@ -1,12 +1,12 @@
 #include "ShaderPrecompiler.h"
 
-void precompileShader(std::string source, std::string destination, std::pair<std::string, std::string> *defines, size_t nb_defines)
+void precompileShader(std::string source, std::string destination, std::forward_list<std::pair<std::string, std::string>>* defines)
 {
-    for (size_t i = 0; i < nb_defines; i++)
+    for (auto &&i : *defines)
     {
-        define[defines[i].first] = defines[i].second;
+        define[i.first] = i.second;
     }
-    delete[] defines;
+    defines->clear();
     std::ofstream ofs(destination, std::ofstream::out);
 
     include(ofs, source);
@@ -65,6 +65,10 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
     {
     }
 }
+void processDefine(std::ofstream &out_file, std::ifstream &in_file, std::string token, char end)
+{
+    
+}
 std::string stripFile(std::string path)
 {
     return path.substr(0, path.find_last_of('\\') + 1);
@@ -72,4 +76,17 @@ std::string stripFile(std::string path)
 bool isInDefine(std::string name)
 {
     return define.find(name) != define.end();
+}
+bool isEndOfToken(char c)
+{
+    for (auto &&i : end_of_token)
+    {
+        if (i == c)
+        {
+            return true;
+        }
+        
+    }
+    
+    return false;
 }
