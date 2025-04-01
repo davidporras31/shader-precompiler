@@ -1,15 +1,16 @@
 IN
-IN
 
-test1
-test2 0
-test3(un) test un
 
-test1
-test2
+
+
+
+
+
+0
 test3(1)
 
 "inc.txt"
 "in.txt"
 
 hello
+15

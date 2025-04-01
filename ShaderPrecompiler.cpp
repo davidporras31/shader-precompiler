@@ -27,8 +27,7 @@ void include(std::ofstream &out_file, std::string source)
                 processPrecompileStatement(out_file, ifs, s, c);
                 s.clear();
                 continue;
-            }
-            if (isInDefine(s))
+            }else if (isInDefine(s))
             {
                 processDefine(out_file, ifs, s, c);
                 s.clear();
@@ -43,6 +42,19 @@ void include(std::ofstream &out_file, std::string source)
             s += c;
         }
     }
+    if (!s.empty())
+    {
+        if (s.front() == '#')
+        {
+            processPrecompileStatement(out_file, ifs, s, c);
+            s.clear();
+        }else if (isInDefine(s))
+        {
+            processDefine(out_file, ifs, s, c);
+            s.clear();
+        }
+    }
+    
     if (isEndOfToken(c))
     {
         out_file << s;
@@ -54,6 +66,55 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
 {
     if (token == "#define")
     {
+        std::cout << token << end;
+        std::string name,value;
+        char tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp != ' ')
+            {
+                break;
+            }
+        }
+        name += tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp == ' ')
+            {
+                break;
+            }
+            if(tmp == '\n')
+            {
+                out_file << tmp;
+                break;
+            }
+            name += tmp;
+        }
+        if(tmp != '\n')
+        {
+            while (in_file.get(tmp))
+            {
+                if (tmp != ' ')
+                {
+                    break;
+                }
+            }
+        }
+        if(tmp != '\n')
+        {
+            value += tmp;
+            while (in_file.get(tmp))
+            {
+                if (tmp == '\n')
+                {
+                    out_file << tmp;
+                    break;
+                }
+                value += tmp;
+            }
+        }
+        std::cout << name << " " << value << std::endl;
+        define[name] = value;
     }
     if (token == "#include")
     {
@@ -67,7 +128,9 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
 }
 void processDefine(std::ofstream &out_file, std::ifstream &in_file, std::string token, char end)
 {
-    
+    out_file << define[token];
+    if(isEndOfToken(end))
+        out_file << end;
 }
 std::string stripFile(std::string path)
 {

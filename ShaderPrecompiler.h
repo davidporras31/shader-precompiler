@@ -7,6 +7,7 @@
 #include <array>
 #include <fstream>
 #include <utility>
+#include <iostream>
 
 void precompileShader(std::string source, std::string destination, std::forward_list<std::pair<std::string, std::string>>* defines);
 void include(std::ofstream &out_file, std::string source);
