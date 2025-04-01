@@ -16,7 +16,8 @@ void precompileShader(std::string source, std::string destination, std::forward_
 void include(std::ofstream &out_file, std::string source)
 {
     std::ifstream ifs(source, std::ifstream::in);
-    std::string s;
+    std::string s, path;
+    path = source.substr( 0, source.find_last_of( '/' ) +1 );
     char c;
     while (ifs.get(c))
     {
@@ -24,7 +25,7 @@ void include(std::ofstream &out_file, std::string source)
         {
             if (s.front() == '#')
             {
-                processPrecompileStatement(out_file, ifs, s, c);
+                processPrecompileStatement(out_file, ifs,path, s, c);
                 s.clear();
                 continue;
             }else if (isInDefine(s))
@@ -46,7 +47,7 @@ void include(std::ofstream &out_file, std::string source)
     {
         if (s.front() == '#')
         {
-            processPrecompileStatement(out_file, ifs, s, c);
+            processPrecompileStatement(out_file, ifs,path, s, c);
             s.clear();
         }else if (isInDefine(s))
         {
@@ -62,7 +63,7 @@ void include(std::ofstream &out_file, std::string source)
     ifs.close();
 }
 
-void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file, std::string token, char end)
+void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,std::string path, std::string token, char end)
 {
     if (token == "#define")
     {
@@ -118,6 +119,32 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
     }
     if (token == "#include")
     {
+        std::string pathn;
+        char tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp != ' ')
+            {
+                break;
+            }
+        }
+        pathn += tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp == ' ')
+            {
+                break;
+            }
+            if(tmp == '\n')
+            {
+                out_file << tmp;
+                break;
+            }
+            pathn += tmp;
+        }
+        path = path + pathn.substr(1,pathn.length()-2);
+        std::cout << path;
+        //include(out_file,path);
     }
     if (token == "#ifdef")
     {

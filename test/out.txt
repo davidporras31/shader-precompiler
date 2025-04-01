@@ -9,8 +9,8 @@ IN
 0
 test3(1)
 
-"inc.txt"
-"in.txt"
+
+
 
 hello
 15
