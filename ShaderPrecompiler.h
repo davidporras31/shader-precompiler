@@ -18,5 +18,6 @@ static std::map<std::string, std::string> define;
 bool isInDefine(std::string name);
 constexpr std::array<char, 3> end_of_token = {' ', '\n', '('};
 bool isEndOfToken(char c);
+void skipToEndIf(std::ofstream &out_file, std::ifstream &in_file);
 
 #endif

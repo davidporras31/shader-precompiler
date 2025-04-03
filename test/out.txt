@@ -1,4 +1,3 @@
-IN
 
 
 
@@ -9,8 +8,14 @@ IN
 0
 test3(1)
 
+test define
 
 
 
+hello boom
+
+
+15
+pi = 3.14
 hello
 15

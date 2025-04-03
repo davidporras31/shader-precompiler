@@ -9,9 +9,15 @@ test1
 test2
 test3(1)
 
+#ifdef test1
+test define
+#else
+test not define
+#endif
+
 #include "inc.txt"
 #include "in.txt"
-
+pi = PI
 hello
 #endif
 mah

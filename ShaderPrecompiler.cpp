@@ -67,7 +67,6 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
 {
     if (token == "#define")
     {
-        std::cout << token << end;
         std::string name,value;
         char tmp;
         while (in_file.get(tmp))
@@ -114,7 +113,6 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
                 value += tmp;
             }
         }
-        std::cout << name << " " << value << std::endl;
         define[name] = value;
     }
     if (token == "#include")
@@ -143,14 +141,58 @@ void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file,
             pathn += tmp;
         }
         path = path + pathn.substr(1,pathn.length()-2);
-        std::cout << path;
-        //include(out_file,path);
+        include(out_file,path);
+        out_file << tmp;
     }
     if (token == "#ifdef")
     {
+        std::string name;
+        char tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp != ' ')
+            {
+                break;
+            }
+        }
+        name += tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp == ' ' || tmp == '\n')
+            {
+                break;
+            }
+            name += tmp;
+        }
+        if(!isInDefine(name))
+        skipToEndIf(out_file,in_file);
     }
     if (token == "#ifndef")
     {
+        std::string name;
+        char tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp != ' ')
+            {
+                break;
+            }
+        }
+        name += tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp == ' ' || tmp == '\n')
+            {
+                break;
+            }
+            name += tmp;
+        }
+        if(isInDefine(name))
+        skipToEndIf(out_file,in_file);
+    }
+    if (token == "#else")
+    {
+        skipToEndIf(out_file,in_file);
     }
 }
 void processDefine(std::ofstream &out_file, std::ifstream &in_file, std::string token, char end)
@@ -179,4 +221,28 @@ bool isEndOfToken(char c)
     }
     
     return false;
+}
+void skipToEndIf(std::ofstream &out_file, std::ifstream &in_file)
+{
+    std::string s;
+    char c;
+    unsigned int nb_if = 0;
+    while (in_file.get(c))
+    {
+        if (isEndOfToken(c))
+        {
+            if(s == "#endif")
+            {
+                if(nb_if == 0) break ;
+                else --nb_if;
+            }
+            if(s == "#ifdef" || s == "ifndef") ++ nb_if;
+            s.clear();
+        }
+        else
+        {
+            s += c; 
+        }
+    }
+    out_file << c;
 }
