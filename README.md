@@ -1,11 +1,16 @@
 # shader precompiler
+
  precompile shader
- # featured preprocessor directive:
+
+## featured preprocessor directive
+
 - #define
 - #include
 - #ifdef
 - #ifndef
-# use
+
+## use
+
 ```cpp
 std::forward_list<std::pair<std::string,std::string>> defines;
 defines.push_front({"mah","15"});
