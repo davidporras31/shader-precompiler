@@ -1,0 +1,8 @@
+#ifndef INGR
+#define INGR
+
+test include gard and recurtion
+#include "ingr.txt"
+
+#endif
+pass

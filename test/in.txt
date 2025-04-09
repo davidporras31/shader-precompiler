@@ -1,25 +1,6 @@
-#ifndef IN
-#define IN
-
-#define test1
-#define test2 0
-#define test3(un) test un
-#define test4(un,deux) test un deux
-
-test1
-test2
-test3(1)
-test4(1,2)
-
-#ifdef test1
-test define
-#else
-test not define
-#endif
+lunch all tests
 
 #include "inc.txt"
-#include "in.txt"
-pi = PI
-hello
-#endif
-mah
+#include "inif.txt"
+#include "indef.txt"
+#include "ingr.txt"

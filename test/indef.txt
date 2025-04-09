@@ -1,0 +1,20 @@
+test define and macro
+
+#define test1
+empty replace : test1
+#ifdef test1
+pass
+#endif
+#define test2 pass
+text replace : test2
+#define test3(val) val
+macro : test3(pass)
+
+test extern define and macro
+
+empty replace : val1
+#ifdef val1
+pass
+#endif
+text replace : val2
+macro : macro1(pass)

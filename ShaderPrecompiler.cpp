@@ -27,24 +27,20 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source)
             if (s.front() == '#')
             {
                 processPrecompileStatement(out_file, ifs, path, s);
-                s.clear();
-                continue;
             }
             else if (isInDefine(s))
             {
                 processDefine(out_file, s, c);
-                s.clear();
-                continue;
             }
             else if (c == '(' && isInMacro(s))
             {
                 processMacro(out_file, ifs, s);
-                s.clear();
-                continue;
             }
-
-            s += c;
-            out_file << s;
+            else
+            {
+                s += c;
+                out_file << s;
+            }
             s.clear();
         }
         else
@@ -69,11 +65,10 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source)
             processMacro(out_file, ifs, s);
             s.clear();
         }
-    }
-
-    if (isEndOfToken(c))
-    {
-        out_file << s;
+        else
+        {
+            out_file << s;
+        }
     }
     ifs.close();
 }
@@ -180,7 +175,7 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             name += tmp;
         }
         if (!isInDefine(name))
-            skipToEndIf(out_file, in_file);
+            skipToEndIfOrElse(out_file, in_file);
     }
     if (token == "#ifndef")
     {
@@ -203,11 +198,11 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             name += tmp;
         }
         if (isInDefine(name))
-            skipToEndIf(out_file, in_file);
+            skipToEndIfOrElse(out_file, in_file);
     }
     if (token == "#else")
     {
-        skipToEndIf(out_file, in_file);
+        skipToEndIfOrElse(out_file, in_file);
     }
 }
 void ShaderPrecompiler::processDefine(std::ofstream &out_file, std::string token, char end)
@@ -294,7 +289,8 @@ bool ShaderPrecompiler::isEndOfToken(char c)
 
     return false;
 }
-void ShaderPrecompiler::skipToEndIf(std::ofstream &out_file, std::ifstream &in_file)
+
+void ShaderPrecompiler::skipToEndIfOrElse(std::ofstream &out_file, std::ifstream &in_file)
 {
     std::string s;
     char c;
@@ -303,7 +299,7 @@ void ShaderPrecompiler::skipToEndIf(std::ofstream &out_file, std::ifstream &in_f
     {
         if (isEndOfToken(c))
         {
-            if (s == "#endif")
+            if (s == "#endif" || s == "#else")
             {
                 if (nb_if == 0)
                     break;
@@ -319,7 +315,6 @@ void ShaderPrecompiler::skipToEndIf(std::ofstream &out_file, std::ifstream &in_f
             s += c;
         }
     }
-    out_file << c;
 }
 
 void ShaderPrecompiler::splitString(std::string string, char delimiter, std::forward_list<std::string> *list)

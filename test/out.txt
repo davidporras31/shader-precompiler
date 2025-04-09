@@ -1,23 +1,47 @@
+lunch all tests
+
+
+test include
+pass
+
+test brenching
+
+
+ifdef test
+false
+    pass
+true
+    pass
+
+ifndef test
+false
+    pass
+true
+    pass
+
+
+test define and macro
+
+
+empty replace : 
+pass
+
+text replace : pass
+
+macro : pass
+
+test extern define and macro
+
+empty replace : 
+pass
+text replace : pass
+macro : pass
 
 
 
 
+test include gard and recurtion
 
+pass
 
-
-
-0
-test 1
-test 1 2
-
-test define
-
-
-
-hello boom
-
-
-15
-pi = 3.14
-hello
-15
+pass

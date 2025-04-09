@@ -1,0 +1,30 @@
+test brenching
+#define testif
+
+ifdef test
+false
+#ifdef not
+    error
+#else
+    pass
+#endif
+true
+#ifdef testif
+    pass
+#else
+    error
+#endif
+
+ifndef test
+false
+#ifndef not
+    pass
+#else
+    error
+#endif
+true
+#ifndef testif
+    error
+#else
+    pass
+#endif

@@ -9,6 +9,7 @@
 #include <utility>
 #include <exception>
 #include <regex>
+
 namespace ShaderPrecompiler
 {
     /// @brief precompile shader from source to destination
@@ -35,6 +36,7 @@ namespace ShaderPrecompiler
     constexpr std::array<char, 3> end_of_token = {' ', '\n', '('};
     bool isEndOfToken(char c);
     void skipToEndIf(std::ofstream &out_file, std::ifstream &in_file);
+    void skipToEndIfOrElse(std::ofstream &out_file, std::ifstream &in_file);
 
     /// @brief split string to a list
     /// @param string the string to split
