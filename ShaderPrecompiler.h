@@ -15,24 +15,24 @@ namespace ShaderPrecompiler
     /// @brief precompile shader from source to destination
     /// @param source the source file use as include source
     /// @param destination the destination file
-    /// @param defines list of defines to load before precompiling
-    void precompileShader(std::string source, std::string destination, std::forward_list<std::pair<std::string, std::string>> *defines);
+    /// @param defines map of all defines to load before precompiling and use as storage while runnig
+    void precompileShader(std::string source, std::string destination, std::map<std::string, std::string> *defines);
 
     /// @brief include a file to out_file and run precompiler on it
     /// @param out_file output file
     /// @param source path to the file to open
-    void include(std::ofstream &out_file, std::string source);
-    void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file, std::string path, std::string token);
-    void processDefine(std::ofstream &out_file, std::string token, char end);
-    void processMacro(std::ofstream &out_file, std::ifstream &in_file, std::string token);
+    void include(std::ofstream &out_file, std::string source, std::map<std::string, std::string> *defines);
+    void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file, std::string path, std::string token, std::map<std::string, std::string> *defines);
+    void processDefine(std::ofstream &out_file, std::string token, char end, std::map<std::string, std::string> *defines);
+    void processMacro(std::ofstream &out_file, std::ifstream &in_file, std::string token, std::map<std::string, std::string> *defines);
 
     /// @brief strip file from a path
     /// @param path path to strip
     /// @return a path without the file
     std::string stripFile(std::string path);
-    static std::map<std::string, std::string> define;
-    bool isInDefine(std::string name);
-    bool isInMacro(std::string name);
+
+    bool isInDefine( std::map<std::string, std::string> *defines,std::string name);
+    bool isInMacro( std::map<std::string, std::string> *defines,std::string name);
     constexpr std::array<char, 3> end_of_token = {' ', '\n', '('};
     bool isEndOfToken(char c);
     void skipToEndIfOrElse(std::ifstream &in_file);
