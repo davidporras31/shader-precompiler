@@ -12,7 +12,7 @@
 ## use
 
 ```cpp
-std::forward_list<std::pair<std::string,std::string>> defines;
-defines.push_front({"mah","15"});
-void precompileShader("input/test.glsl", "output/test.glsl", &defines)
+std::map<std::string, std::string> define;
+define["val2"] = "pass";
+ShaderPrecompiler::precompileShader("input/test.glsl", "output/test.glsl", &define)
 ```
