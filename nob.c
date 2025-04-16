@@ -1,5 +1,5 @@
 #define NOB_IMPLEMENTATION
-#include "nob.h"
+#include "nob/nob.h"
 
 #define BUILD_FOLDER "build/"
 #define OBJECT_FOLDER "obj/"

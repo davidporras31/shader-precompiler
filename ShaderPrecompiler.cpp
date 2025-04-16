@@ -121,7 +121,7 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
         }
         defines->operator[](name) = value;
     }
-    if (token == "#include")
+    else if (token == "#include")
     {
         std::string pathn;
         char tmp;
@@ -147,10 +147,10 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             pathn += tmp;
         }
         path = path + pathn.substr(1, pathn.length() - 2);
-        include(out_file, path,defines);
+        include(out_file, path, defines);
         out_file << tmp;
     }
-    if (token == "#ifdef")
+    else if (token == "#ifdef")
     {
         std::string name;
         char tmp;
@@ -170,10 +170,10 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             }
             name += tmp;
         }
-        if (!isInDefine(defines,name))
+        if (!isInDefine(defines, name))
             skipToEndIfOrElse(in_file);
     }
-    if (token == "#ifndef")
+    else if (token == "#ifndef")
     {
         std::string name;
         char tmp;
@@ -193,12 +193,49 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             }
             name += tmp;
         }
-        if (isInDefine(defines,name))
+        if (isInDefine(defines, name))
             skipToEndIfOrElse(in_file);
     }
-    if (token == "#else")
+    else if (token == "#else")
     {
         skipToEndIfOrElse(in_file);
+    }
+    else if (token == "#undef")
+    {
+        std::string name;
+        char tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp != ' ')
+            {
+                break;
+            }
+        }
+        name += tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp == ' ')
+            {
+                break;
+            }
+            if (tmp == '\n')
+            {
+                out_file << tmp;
+                break;
+            }
+            name += tmp;
+        }
+        if (tmp != '\n')
+        {
+            while (in_file.get(tmp))
+            {
+                if (tmp != ' ')
+                {
+                    break;
+                }
+            }
+        }
+        defines->erase(name);
     }
 }
 void ShaderPrecompiler::processDefine(std::ofstream &out_file, std::string token, char end, std::map<std::string, std::string> *defines)
@@ -255,11 +292,11 @@ std::string ShaderPrecompiler::stripFile(std::string path)
 {
     return path.substr(0, path.find_last_of('\\') + 1);
 }
-bool ShaderPrecompiler::isInDefine( std::map<std::string, std::string> *defines,std::string name)
+bool ShaderPrecompiler::isInDefine(std::map<std::string, std::string> *defines, std::string name)
 {
     return defines->find(name) != defines->end();
 }
-bool ShaderPrecompiler::isInMacro( std::map<std::string, std::string> *defines,std::string name)
+bool ShaderPrecompiler::isInMacro(std::map<std::string, std::string> *defines, std::string name)
 {
     for (auto &&i : *defines)
     {

@@ -31,8 +31,8 @@ namespace ShaderPrecompiler
     /// @return a path without the file
     std::string stripFile(std::string path);
 
-    bool isInDefine( std::map<std::string, std::string> *defines,std::string name);
-    bool isInMacro( std::map<std::string, std::string> *defines,std::string name);
+    bool isInDefine(std::map<std::string, std::string> *defines, std::string name);
+    bool isInMacro(std::map<std::string, std::string> *defines, std::string name);
     constexpr std::array<char, 3> end_of_token = {' ', '\n', '('};
     bool isEndOfToken(char c);
     void skipToEndIfOrElse(std::ifstream &in_file);
