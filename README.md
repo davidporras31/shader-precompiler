@@ -8,6 +8,7 @@
 - #include
 - #ifdef
 - #ifndef
+- #undef
 
 ## use
 
