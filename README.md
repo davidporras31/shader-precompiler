@@ -9,6 +9,7 @@
 - #ifdef
 - #ifndef
 - #undef
+- #error
 
 ## use
 

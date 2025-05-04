@@ -69,6 +69,9 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source, std
     ifs.close();
 }
 
+// Process the precompile statement
+// #define, #include, #ifdef, #ifndef, #else, #undef, #error
+// and does nothing on #endif
 void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file, std::string path, std::string token, std::map<std::string, std::string> *defines)
 {
     if (token == "#define")
@@ -237,6 +240,37 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
         }
         defines->erase(name);
     }
+    else if (token == "#error")
+    {
+        std::string reason;
+        char tmp = '\n';
+        while (in_file.get(tmp))
+        {
+            if (tmp != ' ' || tmp == '\n')
+            {
+                break;
+            }
+        }
+        if (tmp == '\n')
+        {
+            out_file << tmp;
+            throw PrecompilerExecption("no reason given");
+        }
+        reason += tmp;
+        while (in_file.get(tmp))
+        {
+            if (tmp == '\n')
+            {
+                out_file << tmp;
+                break;
+            }
+            reason += tmp;
+        }
+        if (!reason.empty())
+        {
+            throw PrecompilerExecption(reason);
+        }
+    }
 }
 void ShaderPrecompiler::processDefine(std::ofstream &out_file, std::string token, char end, std::map<std::string, std::string> *defines)
 {
@@ -270,7 +304,7 @@ void ShaderPrecompiler::processMacro(std::ofstream &out_file, std::ifstream &in_
             splitString(value, ',', &values);
             if (std::distance(values.begin(), values.end()) != std::distance(params.begin(), params.end()))
             {
-                throw MacroParamExecption();
+                throw MacroParamExecption(std::distance(values.begin(), values.end()), std::distance(params.begin(), params.end()));
             }
             auto it1 = values.begin();
             auto it2 = params.begin();

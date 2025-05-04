@@ -16,11 +16,16 @@ namespace ShaderPrecompiler
     /// @param source the source file use as include source
     /// @param destination the destination file
     /// @param defines map of all defines to load before precompiling and use as storage while runnig
+    /// @exception PrecompilerExecption if the precompiler read #error statement
+    /// @exception MacroParamExecption if the macro parameter number don't match
     void precompileShader(std::string source, std::string destination, std::map<std::string, std::string> *defines);
 
     /// @brief include a file to out_file and run precompiler on it
     /// @param out_file output file
     /// @param source path to the file to open
+    /// @param defines map of all defines to load before precompiling and use as storage while runnig
+    /// @exception PrecompilerExecption if the precompiler read #error statement
+    /// @exception MacroParamExecption if the macro parameter number don't match
     void include(std::ofstream &out_file, std::string source, std::map<std::string, std::string> *defines);
     void processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file, std::string path, std::string token, std::map<std::string, std::string> *defines);
     void processDefine(std::ofstream &out_file, std::string token, char end, std::map<std::string, std::string> *defines);
@@ -46,10 +51,28 @@ namespace ShaderPrecompiler
     class MacroParamExecption : public std::exception
     {
     public:
+        MacroParamExecption(size_t given, size_t expected) : m_given(given), m_expected(expected) {}
         const char *what() const throw()
         {
-            return "macro parameter number don't match use";
+            std::string msg = std::string("macro parameter number don't match use expected ") + std::to_string(m_expected) + " but got " + std::to_string(m_given);
+            return msg.c_str();
         }
+
+    private:
+        size_t m_given;
+        size_t m_expected;
+    };
+    class PrecompilerExecption : public std::exception
+    {
+    public:
+        PrecompilerExecption(std::string msg) : m_msg(msg) {}
+        const char *what() const throw()
+        {
+            return m_msg.c_str();
+        }
+
+    private:
+        std::string m_msg;
     };
 
 }
