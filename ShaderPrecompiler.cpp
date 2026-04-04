@@ -20,6 +20,11 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source, std
     {
         if (isEndOfToken(c))
         {
+            if (s.empty())
+            {
+                out_file << c;
+                continue;
+            }
             if (s.front() == '#')
             {
                 processPrecompileStatement(out_file, ifs, path, s, defines);
@@ -254,7 +259,7 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
         if (tmp == '\n')
         {
             out_file << tmp;
-            throw PrecompilerExecption("no reason given");
+            throw PrecompilerException("no reason given");
         }
         reason += tmp;
         while (in_file.get(tmp))
@@ -268,7 +273,7 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
         }
         if (!reason.empty())
         {
-            throw PrecompilerExecption(reason);
+            throw PrecompilerException(reason);
         }
     }
 }
@@ -304,7 +309,7 @@ void ShaderPrecompiler::processMacro(std::ofstream &out_file, std::ifstream &in_
             splitString(value, ',', &values);
             if (std::distance(values.begin(), values.end()) != std::distance(params.begin(), params.end()))
             {
-                throw MacroParamExecption(std::distance(values.begin(), values.end()), std::distance(params.begin(), params.end()));
+                throw MacroParamException(std::distance(values.begin(), values.end()), std::distance(params.begin(), params.end()));
             }
             auto it1 = values.begin();
             auto it2 = params.begin();

@@ -16,11 +16,11 @@ int main(int argc, char **argv)
     nob_cmd_append(&cmd, BUILD_ARGS, "-c", "-o", OBJECT_FOLDER "ShaderPrecompiler.o", "ShaderPrecompiler.cpp");
     if (!nob_cmd_run_sync_and_reset(&cmd))
         return 1;
-    nob_cmd_append(&cmd, BUILD_ARGS, "-o", BUILD_FOLDER "test.exe", "test/main.cpp", OBJECT_FOLDER "ShaderPrecompiler.o");
+    nob_cmd_append(&cmd, BUILD_ARGS, "-o", BUILD_FOLDER "test.out", "test/main.cpp", OBJECT_FOLDER "ShaderPrecompiler.o");
     if (!nob_cmd_run_sync_and_reset(&cmd))
         return 1;
 
-    nob_cmd_append(&cmd, BUILD_FOLDER "test.exe");
+    nob_cmd_append(&cmd, BUILD_FOLDER "test.out");
     if (!nob_cmd_run_sync_and_reset(&cmd))
         return 1;
 
