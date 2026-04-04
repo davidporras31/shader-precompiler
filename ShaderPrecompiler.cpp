@@ -1,18 +1,71 @@
 #include "ShaderPrecompiler.h"
 
+bool ShaderPrecompiler::needsReprecompile(std::string destination, std::map<std::string, std::string> *defines)
+{
+    if (!std::filesystem::exists(destination))
+        return true;
+    std::ifstream dep(destination + ".d", std::ifstream::in);
+    if (!dep.is_open())
+        return true;
+
+    std::string line;
+    std::getline(dep, line);
+    if (line.size() < 5)
+        return true;
+    
+    if (line.substr(0, 5) != "hash=")
+        return true;
+    
+    size_t hash;
+    try
+    {
+        hash = std::stoull(line.substr(5));
+    }
+    catch (const std::exception &e)
+    {
+        return true;
+    }
+    if (hash != hashAMap(defines))
+        return true;
+    auto last_write_time = std::filesystem::last_write_time(destination);
+    while (std::getline(dep, line))
+    {
+        if (!std::filesystem::exists(line))
+            return true;
+        auto dep_last_write_time = std::filesystem::last_write_time(line);
+        if (dep_last_write_time > last_write_time)
+            return true;
+    }
+    dep.close();
+    return false;
+}
+
 void ShaderPrecompiler::precompileShader(std::string source, std::string destination, std::map<std::string, std::string> *defines)
 {
     std::ofstream ofs(destination, std::ofstream::out);
+    std::ofstream dep(destination + ".d", std::ofstream::out);
 
-    include(ofs, source, defines);
+    if (!ofs.is_open())
+        throw PrecompilerException("can't open destination file");
+    if (!dep.is_open())
+        throw PrecompilerException("can't open dependency file");
+
+    dep << "hash=" << hashAMap(defines) << std::endl;
+
+    include(ofs, dep, source, defines);
 
     ofs.close();
+    dep.close();
 
     defines->clear();
 }
-void ShaderPrecompiler::include(std::ofstream &out_file, std::string source, std::map<std::string, std::string> *defines)
+void ShaderPrecompiler::include(std::ofstream &out_file, std::ofstream &dep_file, std::string source, std::map<std::string, std::string> *defines)
 {
+    dep_file << source << std::endl;
     std::ifstream ifs(source, std::ifstream::in);
+    if (!ifs.is_open())
+        throw PrecompilerException("can't open source file: " + source);
+
     std::string s, path;
     path = source.substr(0, source.find_last_of('/') + 1);
     char c;
@@ -27,7 +80,7 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source, std
             }
             if (s.front() == '#')
             {
-                processPrecompileStatement(out_file, ifs, path, s, defines);
+                processPrecompileStatement(out_file, dep_file, ifs, path, s, defines);
             }
             else if (isInDefine(defines, s))
             {
@@ -53,7 +106,7 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source, std
     {
         if (s.front() == '#')
         {
-            processPrecompileStatement(out_file, ifs, path, s, defines);
+            processPrecompileStatement(out_file, dep_file, ifs, path, s, defines);
             s.clear();
         }
         else if (isInDefine(defines, s))
@@ -77,7 +130,7 @@ void ShaderPrecompiler::include(std::ofstream &out_file, std::string source, std
 // Process the precompile statement
 // #define, #include, #ifdef, #ifndef, #else, #undef, #error
 // and does nothing on #endif
-void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std::ifstream &in_file, std::string path, std::string token, std::map<std::string, std::string> *defines)
+void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std::ofstream &dep_file, std::ifstream &in_file, std::string path, std::string token, std::map<std::string, std::string> *defines)
 {
     if (token == "#define")
     {
@@ -155,7 +208,7 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             pathn += tmp;
         }
         path = path + pathn.substr(1, pathn.length() - 2);
-        include(out_file, path, defines);
+        include(out_file, dep_file, path, defines);
         out_file << tmp;
     }
     else if (token == "#ifdef")

@@ -3,7 +3,7 @@
 
 #define BUILD_FOLDER "build/"
 #define OBJECT_FOLDER "obj/"
-#define BUILD_ARGS "g++", "-Wall", "-Wextra"
+#define BUILD_ARGS "g++", "-std=c++17", "-Wall", "-Wextra"
 
 int main(int argc, char **argv)
 {
