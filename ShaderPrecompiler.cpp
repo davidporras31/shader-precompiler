@@ -12,10 +12,10 @@ bool ShaderPrecompiler::needsReprecompile(std::string destination, std::map<std:
     std::getline(dep, line);
     if (line.size() < 5)
         return true;
-    
+
     if (line.substr(0, 5) != "hash=")
         return true;
-    
+
     size_t hash;
     try
     {
@@ -61,10 +61,10 @@ void ShaderPrecompiler::precompileShader(std::string source, std::string destina
 }
 void ShaderPrecompiler::include(std::ofstream &out_file, std::ofstream &dep_file, std::string source, std::map<std::string, std::string> *defines)
 {
-    dep_file << source << std::endl;
     std::ifstream ifs(source, std::ifstream::in);
     if (!ifs.is_open())
         throw PrecompilerException("can't open source file: " + source);
+    dep_file << source << std::endl;
 
     std::string s, path;
     path = source.substr(0, source.find_last_of('/') + 1);

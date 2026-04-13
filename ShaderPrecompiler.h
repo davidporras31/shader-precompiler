@@ -65,6 +65,7 @@ namespace ShaderPrecompiler
         return seed;
     }
 
+    /// @brief exception throw when the macro parameter number don't match the definition
     class MacroParamException : public std::exception
     {
     public:
@@ -79,6 +80,8 @@ namespace ShaderPrecompiler
         size_t m_given;
         size_t m_expected;
     };
+
+    /// @brief exception throw when the precompiler read #error statement or can't open source or destination file
     class PrecompilerException : public std::exception
     {
     public:
