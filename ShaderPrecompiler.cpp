@@ -329,6 +329,10 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
             throw PrecompilerException(reason);
         }
     }
+    else if (token == "#endif")
+    {
+        // do nothing
+    }
     else // if it's not a precompile statement, just write it to the output file
     {
         out_file << token << " ";
