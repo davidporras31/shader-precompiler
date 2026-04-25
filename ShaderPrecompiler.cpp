@@ -331,7 +331,7 @@ void ShaderPrecompiler::processPrecompileStatement(std::ofstream &out_file, std:
     }
     else // if it's not a precompile statement, just write it to the output file
     {
-        out_file << "#" << token << " ";
+        out_file << token << " ";
     }
 }
 void ShaderPrecompiler::processDefine(std::ofstream &out_file, std::string token, char end, std::map<std::string, std::string> *defines)
