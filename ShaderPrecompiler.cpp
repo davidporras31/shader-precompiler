@@ -439,7 +439,7 @@ void ShaderPrecompiler::skipToEndIfOrElse(std::ifstream &in_file)
                 else
                     --nb_if;
             }
-            if (s == "#ifdef" || s == "ifndef")
+            if (s == "#ifdef" || s == "#ifndef")
                 ++nb_if;
             s.clear();
         }
